@@ -298,86 +298,50 @@ export function StatsView() {
         )}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Total Wins Chart */}
-        <Card className="rounded-3xl shadow-xl border-0 bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-4 text-xl">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
-                <Trophy className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-slate-800 font-bold">Total Wins by Player</span>
-            </CardTitle>
-            <CardDescription className="text-slate-600">Cumulative wins across all matches</CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="space-y-4">
-              {statsData.playerWins.map((player, index) => (
-                <div key={player.player} className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 flex items-center justify-center">
-                        {index === 0 ? (
-                          <span className="text-xl">🥇</span>
-                        ) : index === 1 ? (
-                          <span className="text-xl">🥈</span>
-                        ) : index === 2 ? (
-                          <span className="text-xl">🥉</span>
-                        ) : null}
-                      </div>
-                      <span className="font-semibold text-slate-800">{player.player}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className="bg-slate-100 text-slate-700 font-medium">{player.wins} wins</Badge>
-                      <span className="font-bold text-slate-800">{player.percentage.toFixed(1)}%</span>
-                    </div>
-                  </div>
-                  <div className="w-full bg-slate-200 rounded-full h-3">
-                    <div
-                      className={`h-3 rounded-full transition-all duration-1000 ease-out ${player.color}`}
-                      style={{ width: `${player.percentage}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
+      {/* Total Wins Chart */}
+      <Card className="rounded-3xl shadow-xl border-0 bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-4 text-xl">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
+              <Trophy className="w-6 h-6 text-white" />
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Win Streaks */}
-        <Card className="rounded-3xl shadow-xl border-0 bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-4 text-xl">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
-                <Activity className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-slate-800 font-bold">Win Streaks</span>
-            </CardTitle>
-            <CardDescription className="text-slate-600">Current and longest winning streaks</CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="space-y-3">
-              {statsData.winStreaks.map((streak) => (
-                <div key={streak.player} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+            <span className="text-slate-800 font-bold">Total Wins by Player</span>
+          </CardTitle>
+          <CardDescription className="text-slate-600">Cumulative wins across all matches</CardDescription>
+        </CardHeader>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            {statsData.playerWins.map((player, index) => (
+              <div key={player.player} className="space-y-2">
+                <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <span className="font-semibold text-slate-800">{streak.player}</span>
+                    <div className="w-8 h-8 flex items-center justify-center">
+                      {index === 0 ? (
+                        <span className="text-xl">🏆</span>
+                      ) : index === 1 ? (
+                        <span className="text-xl">🥈</span>
+                      ) : index === 2 ? (
+                        <span className="text-xl">🥉</span>
+                      ) : null}
+                    </div>
+                    <span className="font-semibold text-slate-800">{player.player}</span>
                   </div>
-                  <div className="flex items-center gap-4 text-sm">
-                    <div className="text-center">
-                      <p className="font-bold text-slate-800">{streak.currentStreak}</p>
-                      <p className="text-xs text-slate-600">Current</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="font-bold text-slate-800">{streak.longestStreak}</p>
-                      <p className="text-xs text-slate-600">Best</p>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-slate-100 text-slate-700 font-medium">{player.wins} wins</Badge>
+                    <span className="font-bold text-slate-800">{player.percentage.toFixed(1)}%</span>
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                <div className="w-full bg-slate-200 rounded-full h-3">
+                  <div
+                    className={`h-3 rounded-full transition-all duration-1000 ease-out ${player.color}`}
+                    style={{ width: `${player.percentage}%` }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Head-to-Head */}
       <Card className="rounded-3xl shadow-xl border-0 bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">

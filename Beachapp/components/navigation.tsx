@@ -7,7 +7,6 @@ import { Calendar, Home, Trophy, BarChart3 } from "lucide-react"
 
 const navigation = [
   { name: "Home", href: "/", icon: Home },
-  { name: "Rankings", href: "/rankings", icon: Trophy },
   { name: "Calendar", href: "/calendar", icon: Calendar },
   { name: "Stats", href: "/stats", icon: BarChart3 },
 ]
@@ -57,7 +56,7 @@ export function Navigation() {
 
       {/* Mobile navigation */}
       <div className="sm:hidden border-t border-border/50">
-        <div className="grid grid-cols-4 gap-1 p-2">
+        <div className="grid grid-cols-3 gap-1 p-2">
           {navigation.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
