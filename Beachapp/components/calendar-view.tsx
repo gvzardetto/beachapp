@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, ChevronLeft, ChevronRight, Trophy, Edit3, Trash2, Plus, Loader2, Users, Clock, Zap, Star } from "lucide-react"
+import { Calendar, ChevronLeft, ChevronRight, Trophy, Edit3, Trash2, Plus, Loader2, Users, Zap, Star } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { type Match } from "@/lib/types"
 import { getAllMatches, getMatchesByDate, deleteMatch, getAllPlayers, updateMatch, logMatch, type Match as SupabaseMatch, type Player } from "@/lib/supabaseClient"
@@ -350,7 +350,7 @@ export function CalendarView() {
         )}
         onClick={() => setSelectedDate(selectedDate === dateKey ? null : dateKey)}
       >
-        <div className="flex justify-between items-start mb-2">
+        <div className="flex justify-start items-start mb-2">
           <span className={cn(
             "text-base font-semibold transition-all duration-200 px-2 py-1 rounded-lg",
             isMonday ? "text-violet-700 font-bold bg-violet-100/50" : "text-slate-700",
@@ -358,14 +358,6 @@ export function CalendarView() {
           )}>
             {day}
           </span>
-          {hasMatches && (
-            <div className={cn(
-              "w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-white shadow-lg transition-all duration-200 group-hover:scale-110",
-              getMatchBadgeColor(dayMatches.length)
-            )}>
-              {dayMatches.length}
-            </div>
-          )}
         </div>
         {hasMatches && (
           <div className="absolute bottom-3 left-3 right-3">
@@ -756,7 +748,7 @@ export function CalendarView() {
                               })}>
                                 <Trophy className="w-4 h-4 text-white" />
                               </div>
-                              <Badge className="bg-primary/10 text-primary font-bold px-3 py-1">
+                              <Badge className="bg-slate-100 text-slate-800 font-bold px-3 py-1 hover:bg-slate-200 transition-colors">
                                 Match {index + 1}
                               </Badge>
                             </div>
@@ -785,10 +777,6 @@ export function CalendarView() {
                               <span className="font-bold text-lg text-primary">
                                 🏆 {getTeamDisplay(match.winningTeam)}
                               </span>
-                            </div>
-                            <div className="flex items-center gap-2 text-xs text-slate-500">
-                              <Clock className="w-3 h-3" />
-                              <span>{new Date(match.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                             </div>
                           </div>
                         </CardContent>
