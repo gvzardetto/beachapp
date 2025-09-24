@@ -320,7 +320,7 @@ export function CalendarView() {
 
   // Empty cells for days before the first day of the month
   for (let i = 0; i < firstDay; i++) {
-    days.push(<div key={`empty-${i}`} className="h-24" />)
+    days.push(<div key={`empty-${i}`} className="h-28 rounded-xl bg-slate-50/30" />)
   }
 
   // Days of the month
@@ -342,24 +342,25 @@ export function CalendarView() {
       <div
         key={day}
         className={cn(
-          "h-24 p-2 border border-border cursor-pointer transition-all duration-200 relative rounded-lg group",
-          isMonday ? "bg-gradient-to-br from-primary/5 to-primary/10 border-primary/30 hover:bg-primary/15" : "hover:bg-accent/20",
-          selectedDate === dateKey ? "bg-gradient-to-br from-success/10 to-success/20 border-success ring-2 ring-success/30 shadow-lg" : "",
-          isToday && "ring-2 ring-primary/50 bg-primary/5"
+          "h-28 p-3 cursor-pointer transition-all duration-300 relative rounded-2xl group shadow-sm hover:shadow-lg",
+          "bg-gradient-to-br from-white to-slate-50/80 border-0",
+          isMonday ? "bg-gradient-to-br from-violet-50 to-purple-50 hover:from-violet-100 hover:to-purple-100 shadow-md" : "hover:from-slate-50 hover:to-slate-100",
+          selectedDate === dateKey ? "bg-gradient-to-br from-emerald-50 to-green-50 ring-2 ring-emerald-400/50 shadow-xl scale-105" : "",
+          isToday && "ring-2 ring-violet-400/60 bg-gradient-to-br from-violet-50/80 to-indigo-50/80 shadow-lg"
         )}
         onClick={() => setSelectedDate(selectedDate === dateKey ? null : dateKey)}
       >
-        <div className="flex justify-between items-start mb-1">
+        <div className="flex justify-between items-start mb-2">
           <span className={cn(
-            "text-sm font-medium transition-colors",
-            isMonday ? "text-primary font-bold" : "text-foreground",
-            isToday && "text-primary font-bold text-lg"
+            "text-base font-semibold transition-all duration-200 px-2 py-1 rounded-lg",
+            isMonday ? "text-violet-700 font-bold bg-violet-100/50" : "text-slate-700",
+            isToday && "text-violet-800 font-bold text-lg bg-violet-200/60 shadow-sm"
           )}>
             {day}
           </span>
           {hasMatches && (
             <div className={cn(
-              "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg",
+              "w-7 h-7 rounded-xl flex items-center justify-center text-xs font-bold text-white shadow-lg transition-all duration-200 group-hover:scale-110",
               getMatchBadgeColor(dayMatches.length)
             )}>
               {dayMatches.length}
@@ -367,25 +368,25 @@ export function CalendarView() {
           )}
         </div>
         {hasMatches && (
-          <div className="absolute bottom-2 left-2 right-2">
-            <div className="flex gap-1">
-              {dayMatches.slice(0, 3).map((_, index) => (
+          <div className="absolute bottom-3 left-3 right-3">
+            <div className="flex gap-1.5 justify-center">
+              {dayMatches.slice(0, 4).map((_, index) => (
                 <div
                   key={index}
                   className={cn(
-                    "w-2 h-2 rounded-full",
+                    "w-2.5 h-2.5 rounded-full shadow-sm transition-all duration-200 group-hover:scale-110",
                     getMatchBadgeColor(dayMatches.length)
                   )}
                 />
               ))}
-              {dayMatches.length > 3 && (
-                <div className="w-2 h-2 rounded-full bg-slate-400" />
+              {dayMatches.length > 4 && (
+                <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-slate-400 to-slate-500 shadow-sm" />
               )}
             </div>
           </div>
         )}
         {isToday && (
-          <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary animate-pulse" />
+          <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 animate-pulse shadow-lg" />
         )}
       </div>,
     )
@@ -679,13 +680,16 @@ export function CalendarView() {
               </div>
               <CardDescription className="text-slate-600 text-base">Click on a date to view and edit match details</CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-7 gap-0 border border-border rounded-lg overflow-hidden">
+            <CardContent className="p-6">
+              <div className="grid grid-cols-7 gap-2 p-4 bg-gradient-to-br from-slate-50/50 to-white rounded-2xl shadow-inner">
                 {/* Day headers */}
-                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
                   <div
                     key={day}
-                    className="p-3 bg-secondary text-center text-sm font-medium text-secondary-foreground border-b border-border"
+                    className={cn(
+                      "p-3 text-center text-sm font-bold rounded-xl shadow-sm transition-all duration-200",
+                      index === 1 ? "bg-gradient-to-br from-violet-100 to-purple-100 text-violet-700" : "bg-white/80 text-slate-600"
+                    )}
                   >
                     {day}
                   </div>
