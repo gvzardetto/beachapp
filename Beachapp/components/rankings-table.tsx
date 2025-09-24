@@ -94,7 +94,7 @@ export function RankingsTable() {
       case 3:
         return <span className="text-2xl">🥉</span>
       default:
-        return <Trophy className="w-5 h-5 text-muted-foreground" />
+        return <div className="w-6 h-6"></div> // Empty space for alignment
     }
   }
 

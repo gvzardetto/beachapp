@@ -600,10 +600,6 @@ export function CalendarView() {
                             </div>
                             <div className="space-y-2">
                               <p className="font-semibold text-foreground">{teamCombinations[team]?.label || `Team ${team}`}</p>
-                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Users className="w-3 h-3" />
-                                <span>Doubles Team</span>
-                              </div>
                             </div>
                           </CardContent>
                         </Card>

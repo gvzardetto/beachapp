@@ -427,10 +427,6 @@ export function MatchLogging() {
                       </div>
                       <div className="space-y-2 text-center">
                         <p className="font-bold text-slate-800 text-lg leading-tight">{teamCombinations[team]?.label || `Team ${team}`}</p>
-                        <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
-                          <Users className="w-3 h-3" />
-                          <span className="font-medium">Doubles Team</span>
-                        </div>
                       </div>
                     </CardContent>
                   </Card>

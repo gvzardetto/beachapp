@@ -249,7 +249,7 @@ export function StatsView() {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6">
         <Card className="rounded-3xl shadow-xl border-0 bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
@@ -259,20 +259,6 @@ export function StatsView() {
               <div>
                 <p className="text-sm font-medium text-slate-600 mb-1">Total Matches</p>
                 <p className="text-3xl font-bold text-slate-800">{statsData.totalMatches}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl shadow-xl border-0 bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
-                <Zap className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-slate-600 mb-1">Longest Streak</p>
-                <p className="text-3xl font-bold text-slate-800">{statsData.longestStreak}</p>
               </div>
             </div>
           </CardContent>
