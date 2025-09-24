@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Trophy, Medal, Award, Loader2 } from "lucide-react"
+import { Trophy, Medal, Award, Loader2, Users } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { PLAYERS, type PlayerStats } from "@/lib/types"
 import { getPlayerRankings, type PlayerRanking } from "@/lib/supabaseClient"
 
