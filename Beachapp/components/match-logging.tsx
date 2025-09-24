@@ -408,7 +408,7 @@ export function MatchLogging() {
                       "from-pink-500 to-rose-500": team === "E"
                     })} />
                     <CardContent className="p-6">
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center justify-center mb-4">
                         <div
                           className={cn("w-12 h-12 rounded-xl flex items-center justify-center shadow-sm", {
                             "bg-gradient-to-br from-purple-500 to-pink-500": team === "A",
@@ -420,15 +420,6 @@ export function MatchLogging() {
                         >
                           <TeamIcon className="w-6 h-6 text-white" />
                         </div>
-                        <Badge
-                          variant={isSelected ? "default" : "outline"}
-                          className={cn(
-                            "font-semibold rounded-lg",
-                            isSelected ? "bg-primary text-primary-foreground" : "border-muted-foreground/30",
-                          )}
-                        >
-                          Team {team}
-                        </Badge>
                       </div>
                       <div className="space-y-2">
                         <p className="font-semibold text-foreground">{teamCombinations[team]?.label || `Team ${team}`}</p>
@@ -565,28 +556,10 @@ export function MatchLogging() {
                     })} />
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={cn(
-                              "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm", {
-                                "bg-gradient-to-br from-purple-500 to-pink-500": match.winningTeam === "A",
-                                "bg-gradient-to-br from-blue-500 to-cyan-500": match.winningTeam === "B",
-                                "bg-gradient-to-br from-yellow-500 to-orange-500": match.winningTeam === "C", 
-                                "bg-gradient-to-br from-green-500 to-emerald-500": match.winningTeam === "D",
-                                "bg-gradient-to-br from-pink-500 to-rose-500": match.winningTeam === "E"
-                              }
-                            )}
-                          >
-                            <TeamIcon className="w-5 h-5 text-white" />
-                          </div>
-                          <div>
-                            <Badge variant="secondary" className="bg-muted/50 text-muted-foreground font-medium mb-1 rounded-lg">
-                              Match {index + 1}
-                            </Badge>
-                            <div className="text-xs text-muted-foreground">
-                              {new Date(match.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                            </div>
-                          </div>
+                        <div>
+                          <Badge variant="secondary" className="bg-muted/50 text-muted-foreground font-medium mb-2 rounded-lg">
+                            Match {index + 1}
+                          </Badge>
                         </div>
                         <div className="flex gap-1">
                           <Button 
@@ -609,15 +582,12 @@ export function MatchLogging() {
                           </Button>
                         </div>
                       </div>
-                      <div className="space-y-3">
-                        <div className="flex items-center gap-2">
-                          <Trophy className="w-4 h-4 text-warning" />
-                          <span className="text-sm font-semibold text-foreground">
-                            🏆 {getTeamDisplay(match.winningTeam)}
-                          </span>
+                      <div className="space-y-2">
+                        <div className="text-sm text-muted-foreground mb-2">
+                          <span className="font-medium">Winners:</span>
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          <span className="font-medium">Winning Team</span>
+                        <div className="text-lg font-bold text-primary">
+                          🏆 {getTeamDisplay(match.winningTeam)}
                         </div>
                       </div>
                     </CardContent>
