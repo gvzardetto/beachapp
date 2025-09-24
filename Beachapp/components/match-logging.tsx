@@ -357,15 +357,19 @@ export function MatchLogging() {
           <p className="text-muted-foreground">Track your tennis victories</p>
         </div>
 
-        <Card className="border-0 shadow-lg rounded-2xl bg-card/50 backdrop-blur-sm">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <Trophy className="w-6 h-6 text-primary" />
+        <Card className="border-0 shadow-2xl rounded-3xl bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
+          <CardHeader className="pb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
+                <Trophy className="w-7 h-7 text-white" />
               </div>
               <div>
-                <CardTitle className="text-xl">Log Match Result</CardTitle>
-                <CardDescription>Select the winning team and date</CardDescription>
+                <CardTitle className="text-2xl bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 bg-clip-text text-transparent font-bold">
+                  Log Match Result
+                </CardTitle>
+                <CardDescription className="text-slate-600 text-base mt-1">
+                  Select the winning team and date
+                </CardDescription>
               </div>
             </div>
           </CardHeader>
@@ -393,39 +397,39 @@ export function MatchLogging() {
                   <Card
                     key={team}
                     className={cn(
-                      "cursor-pointer transition-all duration-200 hover:shadow-lg border-0 overflow-hidden group rounded-xl",
+                      "cursor-pointer transition-all duration-500 border-0 overflow-hidden group rounded-2xl backdrop-blur-sm",
                       isSelected
-                        ? "ring-2 ring-primary shadow-lg scale-105"
-                        : "hover:scale-102 shadow-md hover:shadow-lg",
+                        ? "ring-2 ring-violet-400 shadow-2xl scale-105 bg-gradient-to-br from-violet-50/80 to-purple-50/80"
+                        : "hover:scale-105 shadow-lg hover:shadow-2xl bg-gradient-to-br from-white/90 to-slate-50/90",
                     )}
                     onClick={() => setSelectedTeam(team)}
                   >
                     <div className={cn("h-2 bg-gradient-to-r", {
-                      "from-purple-500 to-pink-500": team === "A",
-                      "from-blue-500 to-cyan-500": team === "B", 
-                      "from-yellow-500 to-orange-500": team === "C",
-                      "from-green-500 to-emerald-500": team === "D",
-                      "from-pink-500 to-rose-500": team === "E"
+                      "from-rose-400 via-pink-400 to-purple-400": team === "A",
+                      "from-blue-400 via-cyan-400 to-teal-400": team === "B", 
+                      "from-amber-400 via-orange-400 to-red-400": team === "C",
+                      "from-emerald-400 via-green-400 to-teal-400": team === "D",
+                      "from-pink-400 via-rose-400 to-red-400": team === "E"
                     })} />
                     <CardContent className="p-6">
-                      <div className="flex items-center justify-center mb-4">
+                      <div className="flex items-center justify-center mb-5">
                         <div
-                          className={cn("w-12 h-12 rounded-xl flex items-center justify-center shadow-sm", {
-                            "bg-gradient-to-br from-purple-500 to-pink-500": team === "A",
-                            "bg-gradient-to-br from-blue-500 to-cyan-500": team === "B",
-                            "bg-gradient-to-br from-yellow-500 to-orange-500": team === "C", 
-                            "bg-gradient-to-br from-green-500 to-emerald-500": team === "D",
-                            "bg-gradient-to-br from-pink-500 to-rose-500": team === "E"
+                          className={cn("w-16 h-16 rounded-2xl flex items-center justify-center shadow-xl transition-all duration-300 group-hover:scale-110", {
+                            "bg-gradient-to-br from-rose-500 via-pink-500 to-purple-500": team === "A",
+                            "bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500": team === "B",
+                            "bg-gradient-to-br from-amber-500 via-orange-500 to-red-500": team === "C", 
+                            "bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500": team === "D",
+                            "bg-gradient-to-br from-pink-500 via-rose-500 to-red-500": team === "E"
                           })}
                         >
-                          <TeamIcon className="w-6 h-6 text-white" />
+                          <TeamIcon className="w-8 h-8 text-white drop-shadow-sm" />
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <p className="font-semibold text-foreground">{teamCombinations[team]?.label || `Team ${team}`}</p>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <div className="space-y-2 text-center">
+                        <p className="font-bold text-slate-800 text-lg leading-tight">{teamCombinations[team]?.label || `Team ${team}`}</p>
+                        <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
                           <Users className="w-3 h-3" />
-                          <span>Doubles Team</span>
+                          <span className="font-medium">Doubles Team</span>
                         </div>
                       </div>
                     </CardContent>

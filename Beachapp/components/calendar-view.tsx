@@ -544,12 +544,12 @@ export function CalendarView() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">Add New Match</h2>
-          <Button variant="outline" onClick={handleCancelAdd}>
+          <Button variant="outline" onClick={handleCancelAdd} className="rounded-xl shadow-md hover:shadow-lg">
             Cancel
           </Button>
         </div>
         
-        <Card>
+        <Card className="rounded-2xl shadow-lg">
           <CardHeader>
             <CardTitle>Create New Match</CardTitle>
             <CardDescription>
@@ -570,32 +570,39 @@ export function CalendarView() {
                         <Card
                           key={team}
                           className={cn(
-                            "cursor-pointer transition-all duration-200 hover:shadow-md",
+                            "cursor-pointer transition-all duration-200 hover:shadow-lg hover:scale-102 rounded-xl shadow-md",
                             isSelected
                               ? "ring-2 ring-primary bg-primary/5 border-primary"
                               : "hover:border-primary/50"
                           )}
                           onClick={() => setNewMatchTeam(team)}
                         >
-                          <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
-                              <div className={cn(
-                                "p-2 rounded-lg",
-                                isSelected ? "bg-primary text-primary-foreground" : "bg-muted"
-                              )}>
-                                <TeamIcon className="w-4 h-4" />
+                          <div className={cn("h-1 bg-gradient-to-r rounded-t-xl", {
+                            "from-purple-500 to-pink-500": team === "A",
+                            "from-blue-500 to-cyan-500": team === "B",
+                            "from-yellow-500 to-orange-500": team === "C", 
+                            "from-green-500 to-emerald-500": team === "D",
+                            "from-pink-500 to-rose-500": team === "E"
+                          })} />
+                          <CardContent className="p-6">
+                            <div className="flex items-center justify-center mb-4">
+                              <div
+                                className={cn("w-12 h-12 rounded-xl flex items-center justify-center shadow-sm", {
+                                  "bg-gradient-to-br from-purple-500 to-pink-500": team === "A",
+                                  "bg-gradient-to-br from-blue-500 to-cyan-500": team === "B",
+                                  "bg-gradient-to-br from-yellow-500 to-orange-500": team === "C", 
+                                  "bg-gradient-to-br from-green-500 to-emerald-500": team === "D",
+                                  "bg-gradient-to-br from-pink-500 to-rose-500": team === "E"
+                                })}
+                              >
+                                <TeamIcon className="w-6 h-6 text-white" />
                               </div>
-                              <div className="space-y-1">
-                                <Badge
-                                  variant={isSelected ? "default" : "secondary"}
-                                  className={cn(
-                                    "text-xs",
-                                    isSelected && "bg-primary text-primary-foreground"
-                                  )}
-                                >
-                                  Team {team}
-                                </Badge>
-                                <p className="text-sm font-medium">{teamCombinations[team]?.label || `Team ${team}`}</p>
+                            </div>
+                            <div className="space-y-2">
+                              <p className="font-semibold text-foreground">{teamCombinations[team]?.label || `Team ${team}`}</p>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Users className="w-3 h-3" />
+                                <span>Doubles Team</span>
                               </div>
                             </div>
                           </CardContent>
@@ -615,10 +622,10 @@ export function CalendarView() {
 
               {/* Action Buttons */}
               <div className="flex gap-2">
-                <Button onClick={handleCancelAdd} variant="outline" disabled={isSaving}>
+                <Button onClick={handleCancelAdd} variant="outline" disabled={isSaving} className="rounded-xl shadow-md hover:shadow-lg">
                   Cancel
                 </Button>
-                <Button onClick={handleSaveNewMatch} disabled={!newMatchTeam || isSaving}>
+                <Button onClick={handleSaveNewMatch} disabled={!newMatchTeam || isSaving} className="rounded-xl shadow-md hover:shadow-lg">
                   {isSaving ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -646,19 +653,21 @@ export function CalendarView() {
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Calendar */}
         <div className="lg:col-span-2">
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
+          <Card className="rounded-3xl shadow-2xl border-0 bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
+            <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Calendar className="w-6 h-6 text-primary" />
-                  {monthName}
+                <CardTitle className="flex items-center gap-4 text-2xl">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
+                    <Calendar className="w-6 h-6 text-white" />
+                  </div>
+                  <span className="text-slate-800 font-bold">{monthName}</span>
                 </CardTitle>
                 <div className="flex gap-2">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => navigateMonth("prev")}
-                    className="hover:bg-accent/20"
+                    className="rounded-2xl shadow-lg hover:shadow-xl border-0 bg-white/80 hover:bg-white transition-all duration-300"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
@@ -666,13 +675,13 @@ export function CalendarView() {
                     variant="outline"
                     size="sm"
                     onClick={() => navigateMonth("next")}
-                    className="hover:bg-accent/20"
+                    className="rounded-2xl shadow-lg hover:shadow-xl border-0 bg-white/80 hover:bg-white transition-all duration-300"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
-              <CardDescription>Click on a date to view and edit match details</CardDescription>
+              <CardDescription className="text-slate-600 text-base">Click on a date to view and edit match details</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-7 gap-0 border border-border rounded-lg overflow-hidden">
@@ -692,23 +701,28 @@ export function CalendarView() {
         </div>
 
         <div>
-          <Card className="border-0 shadow-lg">
-            <CardHeader>
+          <Card className="rounded-3xl shadow-2xl border-0 bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
+            <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg">Match Details</CardTitle>
+                <CardTitle className="flex items-center gap-3 text-xl">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
+                    <Trophy className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-slate-800 font-bold">Match Details</span>
+                </CardTitle>
                 {selectedDate && (
                   <Button 
                     size="sm" 
                     variant="outline" 
-                    className="hover:bg-success/20 bg-transparent"
+                    className="rounded-2xl shadow-lg hover:shadow-xl border-0 bg-white/80 hover:bg-white transition-all duration-300"
                     onClick={handleAddMatch}
                   >
-                    <Plus className="w-4 h-4 mr-1" />
+                    <Plus className="w-4 h-4 mr-2" />
                     Add Match
                   </Button>
                 )}
               </div>
-              <CardDescription>
+              <CardDescription className="text-slate-600">
                 {selectedDate
                   ? `${new Date(selectedDate).toLocaleDateString()} - ${selectedMatches.length} match${selectedMatches.length !== 1 ? "es" : ""}`
                   : "Select a date to view matches"}
@@ -723,11 +737,23 @@ export function CalendarView() {
                         key={match.id}
                         className="border-0 shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden group rounded-xl bg-gradient-to-br from-slate-50 to-slate-100"
                       >
-                        <div className="h-2 bg-gradient-to-r from-primary to-primary/80" />
+                        <div className={cn("h-2 bg-gradient-to-r", {
+                          "from-purple-500 to-pink-500": match.winningTeam === "A",
+                          "from-blue-500 to-cyan-500": match.winningTeam === "B", 
+                          "from-yellow-500 to-orange-500": match.winningTeam === "C",
+                          "from-green-500 to-emerald-500": match.winningTeam === "D",
+                          "from-pink-500 to-rose-500": match.winningTeam === "E"
+                        })} />
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3">
-                              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                              <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center", {
+                                "bg-gradient-to-br from-purple-500 to-pink-500": match.winningTeam === "A",
+                                "bg-gradient-to-br from-blue-500 to-cyan-500": match.winningTeam === "B", 
+                                "bg-gradient-to-br from-yellow-500 to-orange-500": match.winningTeam === "C",
+                                "bg-gradient-to-br from-green-500 to-emerald-500": match.winningTeam === "D",
+                                "bg-gradient-to-br from-pink-500 to-rose-500": match.winningTeam === "E"
+                              })}>
                                 <Trophy className="w-4 h-4 text-white" />
                               </div>
                               <Badge className="bg-primary/10 text-primary font-bold px-3 py-1">
@@ -776,7 +802,7 @@ export function CalendarView() {
                     <Button 
                       size="sm" 
                       variant="outline" 
-                      className="mt-2 hover:bg-success/20 bg-transparent"
+                      className="mt-2 rounded-xl shadow-md hover:shadow-lg"
                       onClick={handleAddMatch}
                     >
                       <Plus className="w-4 h-4 mr-1" />
