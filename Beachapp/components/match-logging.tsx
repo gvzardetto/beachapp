@@ -351,17 +351,17 @@ export function MatchLogging() {
       {/* Match Logging Section */}
       <div className="grid gap-6">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold text-foreground">
             Match Results
           </h1>
-          <p className="text-muted-foreground">Track your tennis victories with style</p>
+          <p className="text-muted-foreground">Track your tennis victories</p>
         </div>
 
-        <Card className="border-0 shadow-xl bg-gradient-to-br from-card via-card to-muted/20 backdrop-blur-sm">
+        <Card className="border-0 shadow-lg rounded-2xl bg-card/50 backdrop-blur-sm">
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl gradient-purple flex items-center justify-center">
-                <Trophy className="w-5 h-5 text-white" />
+              <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-primary" />
               </div>
               <div>
                 <CardTitle className="text-xl">Log Match Result</CardTitle>
@@ -393,25 +393,37 @@ export function MatchLogging() {
                   <Card
                     key={team}
                     className={cn(
-                      "cursor-pointer transition-all duration-300 hover:shadow-xl border-0 overflow-hidden group",
+                      "cursor-pointer transition-all duration-200 hover:shadow-lg border-0 overflow-hidden group rounded-xl",
                       isSelected
-                        ? "ring-2 ring-primary shadow-2xl shadow-primary/25 scale-105"
-                        : "hover:scale-102 shadow-lg hover:shadow-xl",
+                        ? "ring-2 ring-primary shadow-lg scale-105"
+                        : "hover:scale-102 shadow-md hover:shadow-lg",
                     )}
                     onClick={() => setSelectedTeam(team)}
                   >
-                    <div className={cn("h-2", getTeamGradient(team))} />
+                    <div className={cn("h-2 bg-gradient-to-r", {
+                      "from-purple-500 to-pink-500": team === "A",
+                      "from-blue-500 to-cyan-500": team === "B", 
+                      "from-yellow-500 to-orange-500": team === "C",
+                      "from-green-500 to-emerald-500": team === "D",
+                      "from-pink-500 to-rose-500": team === "E"
+                    })} />
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">
                         <div
-                          className={cn("w-12 h-12 rounded-xl flex items-center justify-center", getTeamGradient(team))}
+                          className={cn("w-12 h-12 rounded-xl flex items-center justify-center shadow-sm", {
+                            "bg-gradient-to-br from-purple-500 to-pink-500": team === "A",
+                            "bg-gradient-to-br from-blue-500 to-cyan-500": team === "B",
+                            "bg-gradient-to-br from-yellow-500 to-orange-500": team === "C", 
+                            "bg-gradient-to-br from-green-500 to-emerald-500": team === "D",
+                            "bg-gradient-to-br from-pink-500 to-rose-500": team === "E"
+                          })}
                         >
                           <TeamIcon className="w-6 h-6 text-white" />
                         </div>
                         <Badge
                           variant={isSelected ? "default" : "outline"}
                           className={cn(
-                            "font-semibold",
+                            "font-semibold rounded-lg",
                             isSelected ? "bg-primary text-primary-foreground" : "border-muted-foreground/30",
                           )}
                         >
@@ -433,7 +445,7 @@ export function MatchLogging() {
 
             {/* Success Message */}
             {successMessage && (
-              <Alert className="border-green-200 bg-green-50 text-green-800">
+              <Alert className="border-green-200 bg-green-50/80 text-green-800 rounded-xl">
                 <CheckCircle className="h-4 w-4" />
                 <AlertDescription>{successMessage}</AlertDescription>
               </Alert>
@@ -441,7 +453,7 @@ export function MatchLogging() {
 
             {/* Error Message */}
             {errorMessage && (
-              <Alert variant="destructive">
+              <Alert variant="destructive" className="rounded-xl">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{errorMessage}</AlertDescription>
               </Alert>
@@ -453,7 +465,7 @@ export function MatchLogging() {
                   <Button
                     onClick={handleUpdateMatch}
                     disabled={!selectedTeam || isLoading}
-                    className="flex-1 h-12 rounded-xl gradient-green text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+                    className="flex-1 h-12 rounded-xl bg-primary text-primary-foreground font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50"
                     size="lg"
                   >
                     {isLoading ? (
@@ -472,7 +484,7 @@ export function MatchLogging() {
                     onClick={handleCancelEdit}
                     disabled={isLoading}
                     variant="outline"
-                    className="h-12 px-6 rounded-xl"
+                    className="h-12 px-6 rounded-xl border-2"
                     size="lg"
                   >
                     Cancel
@@ -482,7 +494,7 @@ export function MatchLogging() {
                 <Button
                   onClick={handleSaveResult}
                   disabled={!selectedTeam || isLoading}
-                  className="w-full h-12 rounded-xl gradient-green text-white font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50"
+                  className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50"
                   size="lg"
                 >
                   {isLoading ? (
@@ -504,11 +516,11 @@ export function MatchLogging() {
       </div>
 
       {/* Matches Display Section */}
-      <Card className="border-0 shadow-xl bg-gradient-to-br from-card to-secondary/10">
+      <Card className="border-0 shadow-lg rounded-2xl bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl gradient-pink flex items-center justify-center">
-              <Clock className="w-5 h-5 text-white" />
+            <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center">
+              <Clock className="w-6 h-6 text-accent" />
             </div>
             <div>
               <CardTitle className="text-xl">
@@ -525,8 +537,8 @@ export function MatchLogging() {
         <CardContent>
           {todayMatches.length === 0 ? (
             <div className="text-center py-16">
-              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl gradient-purple flex items-center justify-center opacity-20">
-                <Trophy className="w-10 h-10 text-white" />
+              <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-primary/10 flex items-center justify-center">
+                <Trophy className="w-10 h-10 text-primary/60" />
               </div>
               <p className="text-lg font-semibold mb-2 text-foreground">No matches logged yet</p>
               <p className="text-sm text-muted-foreground">Start by logging your first match above</p>
@@ -540,24 +552,35 @@ export function MatchLogging() {
                   <Card
                     key={match.id}
                     className={cn(
-                      "border-0 shadow-lg hover:shadow-xl transition-all duration-200 overflow-hidden group",
-                      isWinningTeam && "ring-2 ring-primary/20 shadow-primary/10"
+                      "border-0 shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden group rounded-xl",
+                      isWinningTeam && "ring-2 ring-primary/20"
                     )}
                   >
-                    <div className={cn("h-2", getTeamGradient(match.winningTeam))} />
+                    <div className={cn("h-2 bg-gradient-to-r", {
+                      "from-purple-500 to-pink-500": match.winningTeam === "A",
+                      "from-blue-500 to-cyan-500": match.winningTeam === "B", 
+                      "from-yellow-500 to-orange-500": match.winningTeam === "C",
+                      "from-green-500 to-emerald-500": match.winningTeam === "D",
+                      "from-pink-500 to-rose-500": match.winningTeam === "E"
+                    })} />
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
                           <div
                             className={cn(
-                              "w-10 h-10 rounded-xl flex items-center justify-center shadow-lg",
-                              getTeamGradient(match.winningTeam),
+                              "w-10 h-10 rounded-xl flex items-center justify-center shadow-sm", {
+                                "bg-gradient-to-br from-purple-500 to-pink-500": match.winningTeam === "A",
+                                "bg-gradient-to-br from-blue-500 to-cyan-500": match.winningTeam === "B",
+                                "bg-gradient-to-br from-yellow-500 to-orange-500": match.winningTeam === "C", 
+                                "bg-gradient-to-br from-green-500 to-emerald-500": match.winningTeam === "D",
+                                "bg-gradient-to-br from-pink-500 to-rose-500": match.winningTeam === "E"
+                              }
                             )}
                           >
                             <TeamIcon className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <Badge variant="secondary" className="bg-muted/50 text-muted-foreground font-medium mb-1">
+                            <Badge variant="secondary" className="bg-muted/50 text-muted-foreground font-medium mb-1 rounded-lg">
                               Match {index + 1}
                             </Badge>
                             <div className="text-xs text-muted-foreground">
@@ -569,7 +592,7 @@ export function MatchLogging() {
                           <Button 
                             variant="ghost" 
                             size="sm" 
-                            className="h-8 w-8 p-0 hover:bg-primary/20 hover:text-primary rounded-lg"
+                            className="h-8 w-8 p-0 hover:bg-primary/20 hover:text-primary rounded-lg transition-colors"
                             onClick={() => handleEditMatch(match)}
                             disabled={isLoading}
                           >
@@ -578,7 +601,7 @@ export function MatchLogging() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 hover:bg-destructive/20 hover:text-destructive rounded-lg"
+                            className="h-8 w-8 p-0 hover:bg-destructive/20 hover:text-destructive rounded-lg transition-colors"
                             onClick={() => handleDeleteMatch(match.id)}
                             disabled={isLoading}
                           >

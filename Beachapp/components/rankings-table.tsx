@@ -117,10 +117,12 @@ export function RankingsTable() {
         <p className="text-muted-foreground">Current standings based on win percentage and matches played</p>
       </div>
 
-      <Card>
+      <Card className="border-0 shadow-lg rounded-2xl bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-primary" />
+            <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Trophy className="w-4 h-4 text-primary" />
+            </div>
             Leaderboard
           </CardTitle>
           <CardDescription>Rankings updated after each match</CardDescription>
@@ -139,7 +141,7 @@ export function RankingsTable() {
               </thead>
               <tbody>
                 {rankings.map((player) => (
-                  <tr key={player.id} className="border-b border-border/50 hover:bg-muted/30 transition-colors">
+                  <tr key={player.id} className="border-b border-border/50 hover:bg-muted/30 transition-all duration-200">
                     <td className="py-4 px-4">
                       <div className="flex items-center gap-3">
                         {getRankingIcon(player.rank)}
@@ -150,17 +152,17 @@ export function RankingsTable() {
                       <div className="font-medium text-foreground">{player.name}</div>
                     </td>
                     <td className="py-4 px-4 text-center">
-                      <Badge variant="outline">{player.total_matches}</Badge>
+                      <Badge variant="outline" className="rounded-lg">{player.total_matches}</Badge>
                     </td>
                     <td className="py-4 px-4 text-center">
-                      <Badge variant="secondary">{player.wins}</Badge>
+                      <Badge variant="secondary" className="rounded-lg">{player.wins}</Badge>
                     </td>
                     <td className="py-4 px-4 text-center">
                       <div className="flex items-center justify-center gap-2">
                         <span className="font-semibold text-primary">{player.win_percentage.toFixed(1)}%</span>
                         <div className="w-16 h-2 bg-muted rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-primary transition-all duration-300"
+                            className="h-full bg-gradient-to-r from-primary to-primary/80 transition-all duration-500 rounded-full"
                             style={{ width: `${player.win_percentage}%` }}
                           />
                         </div>
@@ -176,10 +178,10 @@ export function RankingsTable() {
 
       {/* Top Player Highlight */}
       {rankings.length > 0 && (
-        <Card className="bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
+        <Card className="border-0 shadow-lg rounded-2xl bg-gradient-to-r from-primary/5 to-accent/5 border-primary/20">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-full">
+              <div className="p-4 bg-primary/10 rounded-2xl shadow-sm">
                 <Trophy className="w-8 h-8 text-primary" />
               </div>
               <div>
