@@ -1,81 +1,142 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, ChevronLeft, ChevronRight, Trophy, Edit3, Trash2, Plus } from "lucide-react"
+import { Calendar, ChevronLeft, ChevronRight, Trophy, Edit3, Trash2, Plus, Loader2, Users, Clock, Zap, Star } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { type Match, TEAM_COMBINATIONS } from "@/lib/types"
-
-// Mock match data for different dates
-const mockMatches: Record<string, Match[]> = {
-  "2024-01-08": [
-    {
-      id: "1",
-      date: "2024-01-08T14:00:00Z",
-      winningTeam: "A",
-      players: {
-        teamA: TEAM_COMBINATIONS.A.players,
-        teamB: TEAM_COMBINATIONS.B.players,
-      },
-    },
-    {
-      id: "2",
-      date: "2024-01-08T15:30:00Z",
-      winningTeam: "C",
-      players: {
-        teamA: TEAM_COMBINATIONS.C.players,
-        teamB: TEAM_COMBINATIONS.A.players,
-      },
-    },
-  ],
-  "2024-01-15": [
-    {
-      id: "3",
-      date: "2024-01-15T14:00:00Z",
-      winningTeam: "B",
-      players: {
-        teamA: TEAM_COMBINATIONS.B.players,
-        teamB: TEAM_COMBINATIONS.C.players,
-      },
-    },
-  ],
-  "2024-01-22": [
-    {
-      id: "4",
-      date: "2024-01-22T14:00:00Z",
-      winningTeam: "A",
-      players: {
-        teamA: TEAM_COMBINATIONS.A.players,
-        teamB: TEAM_COMBINATIONS.C.players,
-      },
-    },
-    {
-      id: "5",
-      date: "2024-01-22T15:30:00Z",
-      winningTeam: "B",
-      players: {
-        teamA: TEAM_COMBINATIONS.B.players,
-        teamB: TEAM_COMBINATIONS.A.players,
-      },
-    },
-    {
-      id: "6",
-      date: "2024-01-22T17:00:00Z",
-      winningTeam: "C",
-      players: {
-        teamA: TEAM_COMBINATIONS.C.players,
-        teamB: TEAM_COMBINATIONS.B.players,
-      },
-    },
-  ],
-}
+import { type Match } from "@/lib/types"
+import { getAllMatches, getMatchesByDate, deleteMatch, getAllPlayers, updateMatch, logMatch, type Match as SupabaseMatch, type Player } from "@/lib/supabaseClient"
 
 export function CalendarView() {
-  const [currentDate, setCurrentDate] = useState(new Date(2024, 0, 1)) // January 2024
+  const [currentDate, setCurrentDate] = useState(new Date())
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [matches, setMatches] = useState(mockMatches)
+  const [matches, setMatches] = useState<Record<string, Match[]>>({})
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [players, setPlayers] = useState<Player[]>([])
+  const [teamCombinations, setTeamCombinations] = useState<any>({})
+  const [editingMatch, setEditingMatch] = useState<Match | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [selectedTeam, setSelectedTeam] = useState<"A" | "B" | "C" | "D" | "E" | null>(null)
+  const [isUpdating, setIsUpdating] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
+  const [newMatchTeam, setNewMatchTeam] = useState<"A" | "B" | "C" | "D" | "E" | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Fetch players first
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      try {
+        const fetchedPlayers = await getAllPlayers()
+        setPlayers(fetchedPlayers)
+        
+        // Create team combinations with real player names
+        if (fetchedPlayers.length >= 4) {
+          const combinations = {
+            A: { 
+              players: [fetchedPlayers[0], fetchedPlayers[1]], 
+              label: `${fetchedPlayers[0].name} + ${fetchedPlayers[1].name}` 
+            },
+            B: { 
+              players: [fetchedPlayers[0], fetchedPlayers[2]], 
+              label: `${fetchedPlayers[0].name} + ${fetchedPlayers[2].name}` 
+            },
+            C: { 
+              players: [fetchedPlayers[0], fetchedPlayers[3]], 
+              label: `${fetchedPlayers[0].name} + ${fetchedPlayers[3].name}` 
+            },
+            D: { 
+              players: [fetchedPlayers[1], fetchedPlayers[2]], 
+              label: `${fetchedPlayers[1].name} + ${fetchedPlayers[2].name}` 
+            },
+            E: { 
+              players: [fetchedPlayers[2], fetchedPlayers[3]], 
+              label: `${fetchedPlayers[2].name} + ${fetchedPlayers[3].name}` 
+            }
+          }
+          setTeamCombinations(combinations)
+        }
+      } catch (error) {
+        console.error("Error fetching players:", error)
+        setError("Failed to load players")
+      }
+    }
+    
+    fetchPlayers()
+  }, [])
+
+  // Fetch all matches after players are loaded
+  useEffect(() => {
+    const fetchMatches = async () => {
+      if (Object.keys(teamCombinations).length === 0) return
+      
+      try {
+        setIsLoading(true)
+        setError(null)
+        const allMatches = await getAllMatches()
+        
+        // Group matches by date
+        const matchesByDate: Record<string, Match[]> = {}
+        
+        allMatches.forEach((match: SupabaseMatch) => {
+          const matchDate = new Date(match.date).toISOString().split('T')[0]
+          
+          // Convert Supabase match to our Match format
+          const teamA = teamCombinations.A.players
+          const teamB = teamCombinations.B.players
+          const teamC = teamCombinations.C.players
+          const teamD = teamCombinations.D.players
+          const teamE = teamCombinations.E.players
+          
+          let winningTeam: "A" | "B" | "C" | "D" | "E" = "A"
+          
+          // Check if player1_id and player2_id match any team combination
+          if ((match.player1_id === teamA[0].id && match.player2_id === teamA[1].id) ||
+              (match.player1_id === teamA[1].id && match.player2_id === teamA[0].id)) {
+            winningTeam = "A"
+          } else if ((match.player1_id === teamB[0].id && match.player2_id === teamB[1].id) ||
+                     (match.player1_id === teamB[1].id && match.player2_id === teamB[0].id)) {
+            winningTeam = "B"
+          } else if ((match.player1_id === teamC[0].id && match.player2_id === teamC[1].id) ||
+                     (match.player1_id === teamC[1].id && match.player2_id === teamC[0].id)) {
+            winningTeam = "C"
+          } else if ((match.player1_id === teamD[0].id && match.player2_id === teamD[1].id) ||
+                     (match.player1_id === teamD[1].id && match.player2_id === teamD[0].id)) {
+            winningTeam = "D"
+          } else if ((match.player1_id === teamE[0].id && match.player2_id === teamE[1].id) ||
+                     (match.player1_id === teamE[1].id && match.player2_id === teamE[0].id)) {
+            winningTeam = "E"
+          }
+          
+          const convertedMatch: Match = {
+            id: match.id?.toString() || "",
+            date: match.date,
+            winningTeam,
+            players: {
+              teamA: teamA,
+              teamB: teamB
+            }
+          }
+          
+          if (!matchesByDate[matchDate]) {
+            matchesByDate[matchDate] = []
+          }
+          matchesByDate[matchDate].push(convertedMatch)
+        })
+        
+        setMatches(matchesByDate)
+      } catch (err) {
+        console.error("Error fetching matches:", err)
+        setError("Failed to load matches")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    
+    fetchMatches()
+  }, [teamCombinations])
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
@@ -102,11 +163,153 @@ export function CalendarView() {
     setSelectedDate(null)
   }
 
-  const handleDeleteMatch = (dateKey: string, matchId: string) => {
+  const handleDeleteMatch = async (dateKey: string, matchId: string) => {
+    try {
+      setIsLoading(true)
+      await deleteMatch(parseInt(matchId))
+      
+      // Update local state
     setMatches((prev) => ({
       ...prev,
       [dateKey]: prev[dateKey]?.filter((match) => match.id !== matchId) || [],
     }))
+    } catch (error) {
+      console.error("Error deleting match:", error)
+      setError("Failed to delete match")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleEditMatch = (match: Match) => {
+    setEditingMatch(match)
+    setSelectedTeam(match.winningTeam)
+    setIsEditing(true)
+  }
+
+  const handleCancelEdit = () => {
+    setEditingMatch(null)
+    setSelectedTeam(null)
+    setIsEditing(false)
+  }
+
+  const handleUpdateMatch = async () => {
+    if (!editingMatch || !selectedTeam) {
+      setError("Please select a winning team")
+      return
+    }
+
+    try {
+      setIsUpdating(true)
+      setError(null)
+
+      // Get player IDs for the selected team
+      const teamPlayers = teamCombinations[selectedTeam].players
+      const player1Id = teamPlayers[0].id
+      const player2Id = teamPlayers[1].id
+
+      // Update match in Supabase
+      await updateMatch(parseInt(editingMatch.id), {
+        player1_id: player1Id,
+        player2_id: player2Id,
+        score: "Won"
+      })
+
+      // Update local state
+      const updatedMatch = {
+        ...editingMatch,
+        winningTeam: selectedTeam,
+        players: {
+          teamA: teamCombinations[selectedTeam].players,
+          teamB: teamCombinations[selectedTeam === "A" ? "B" : "A"].players
+        }
+      }
+
+      setMatches(prev => {
+        const newMatches = { ...prev }
+        const dateKey = new Date(editingMatch.date).toISOString().split('T')[0]
+        if (newMatches[dateKey]) {
+          newMatches[dateKey] = newMatches[dateKey].map(m => 
+            m.id === editingMatch.id ? updatedMatch : m
+          )
+        }
+        return newMatches
+      })
+
+      setEditingMatch(null)
+      setSelectedTeam(null)
+      setIsEditing(false)
+    } catch (error) {
+      console.error("Error updating match:", error)
+      setError("Failed to update match")
+    } finally {
+      setIsUpdating(false)
+    }
+  }
+
+  const handleAddMatch = () => {
+    setIsAdding(true)
+    setNewMatchTeam(null)
+  }
+
+  const handleCancelAdd = () => {
+    setIsAdding(false)
+    setNewMatchTeam(null)
+  }
+
+  const handleSaveNewMatch = async () => {
+    if (!newMatchTeam || !selectedDate) {
+      setError("Please select a winning team")
+      return
+    }
+
+    try {
+      setIsSaving(true)
+      setError(null)
+
+      // Get player IDs for the selected team
+      const teamPlayers = teamCombinations[newMatchTeam].players
+      const player1Id = teamPlayers[0].id
+      const player2Id = teamPlayers[1].id
+
+      // Create match in Supabase
+      const newMatch = await logMatch({
+        player1_id: player1Id,
+        player2_id: player2Id,
+        score: "Won",
+        date: new Date(selectedDate).toISOString()
+      })
+
+      // Convert to our Match format
+      const convertedMatch: Match = {
+        id: newMatch.id?.toString() || "",
+        date: newMatch.date,
+        winningTeam: newMatchTeam,
+        players: {
+          teamA: teamCombinations[newMatchTeam].players,
+          teamB: teamCombinations[newMatchTeam === "A" ? "B" : "A"].players
+        }
+      }
+
+      // Update local state
+      setMatches(prev => {
+        const newMatches = { ...prev }
+        if (newMatches[selectedDate]) {
+          newMatches[selectedDate] = [...newMatches[selectedDate], convertedMatch]
+        } else {
+          newMatches[selectedDate] = [convertedMatch]
+        }
+        return newMatches
+      })
+
+      setIsAdding(false)
+      setNewMatchTeam(null)
+    } catch (error) {
+      console.error("Error creating match:", error)
+      setError("Failed to create match")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const daysInMonth = getDaysInMonth(currentDate)
@@ -153,9 +356,247 @@ export function CalendarView() {
 
   const selectedMatches = selectedDate ? matches[selectedDate] || [] : []
 
-  const getTeamDisplay = (team: "A" | "B" | "C") => {
-    const combination = TEAM_COMBINATIONS[team]
-    return `${combination.players[0].name} + ${combination.players[1].name}`
+  const getTeamDisplay = (team: "A" | "B" | "C" | "D" | "E") => {
+    const combination = teamCombinations[team]
+    return combination?.label || `Team ${team}`
+  }
+
+  const getTeamIcon = (team: "A" | "B" | "C" | "D" | "E") => {
+    const icons = { A: Trophy, B: Star, C: Zap, D: Users, E: Clock }
+    return icons[team]
+  }
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Match Calendar</h1>
+          <p className="text-muted-foreground">View match history and results by date</p>
+        </div>
+        <Card>
+          <CardContent className="p-8">
+            <div className="flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+              <span className="ml-2 text-muted-foreground">Loading calendar...</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Match Calendar</h1>
+          <p className="text-muted-foreground">View match history and results by date</p>
+        </div>
+        <Card>
+          <CardContent className="p-8">
+            <div className="text-center">
+              <p className="text-destructive">{error}</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Edit form component
+  if (isEditing && editingMatch) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Edit Match</h2>
+          <Button variant="outline" onClick={handleCancelEdit}>
+            Cancel
+          </Button>
+        </div>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Edit Match Details</CardTitle>
+            <CardDescription>
+              Update the match information for {new Date(editingMatch.date).toLocaleDateString()}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Team Selection */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Select Winning Team</h3>
+                  <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+                    {(Object.keys(teamCombinations) as Array<"A" | "B" | "C" | "D" | "E">).map((team) => {
+                      const TeamIcon = getTeamIcon(team)
+                      const isSelected = selectedTeam === team
+                      return (
+                        <Card
+                          key={team}
+                          className={cn(
+                            "cursor-pointer transition-all duration-200 hover:shadow-md",
+                            isSelected
+                              ? "ring-2 ring-primary bg-primary/5 border-primary"
+                              : "hover:border-primary/50"
+                          )}
+                          onClick={() => setSelectedTeam(team)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-center gap-3">
+                              <div className={cn(
+                                "p-2 rounded-lg",
+                                isSelected ? "bg-primary text-primary-foreground" : "bg-muted"
+                              )}>
+                                <TeamIcon className="w-4 h-4" />
+                              </div>
+                              <div className="space-y-1">
+                                <Badge
+                                  variant={isSelected ? "default" : "secondary"}
+                                  className={cn(
+                                    "text-xs",
+                                    isSelected && "bg-primary text-primary-foreground"
+                                  )}
+                                >
+                                  Team {team}
+                                </Badge>
+                                <p className="text-sm font-medium">{teamCombinations[team]?.label || `Team ${team}`}</p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <p className="text-sm text-destructive">{error}</p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <Button onClick={handleCancelEdit} variant="outline" disabled={isUpdating}>
+                  Cancel
+                </Button>
+                <Button onClick={handleUpdateMatch} disabled={!selectedTeam || isUpdating}>
+                  {isUpdating ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Match"
+                  )}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Add match form component
+  if (isAdding && selectedDate) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">Add New Match</h2>
+          <Button variant="outline" onClick={handleCancelAdd}>
+            Cancel
+          </Button>
+        </div>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Create New Match</CardTitle>
+            <CardDescription>
+              Add a new match for {new Date(selectedDate).toLocaleDateString()}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Team Selection */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">Select Winning Team</h3>
+                  <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
+                    {(Object.keys(teamCombinations) as Array<"A" | "B" | "C" | "D" | "E">).map((team) => {
+                      const TeamIcon = getTeamIcon(team)
+                      const isSelected = newMatchTeam === team
+                      return (
+                        <Card
+                          key={team}
+                          className={cn(
+                            "cursor-pointer transition-all duration-200 hover:shadow-md",
+                            isSelected
+                              ? "ring-2 ring-primary bg-primary/5 border-primary"
+                              : "hover:border-primary/50"
+                          )}
+                          onClick={() => setNewMatchTeam(team)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex items-center gap-3">
+                              <div className={cn(
+                                "p-2 rounded-lg",
+                                isSelected ? "bg-primary text-primary-foreground" : "bg-muted"
+                              )}>
+                                <TeamIcon className="w-4 h-4" />
+                              </div>
+                              <div className="space-y-1">
+                                <Badge
+                                  variant={isSelected ? "default" : "secondary"}
+                                  className={cn(
+                                    "text-xs",
+                                    isSelected && "bg-primary text-primary-foreground"
+                                  )}
+                                >
+                                  Team {team}
+                                </Badge>
+                                <p className="text-sm font-medium">{teamCombinations[team]?.label || `Team ${team}`}</p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
+                  <p className="text-sm text-destructive">{error}</p>
+                </div>
+              )}
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <Button onClick={handleCancelAdd} variant="outline" disabled={isSaving}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSaveNewMatch} disabled={!newMatchTeam || isSaving}>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    "Create Match"
+                  )}
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (
@@ -219,7 +660,12 @@ export function CalendarView() {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-lg">Match Details</CardTitle>
                 {selectedDate && (
-                  <Button size="sm" variant="outline" className="hover:bg-success/20 bg-transparent">
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="hover:bg-success/20 bg-transparent"
+                    onClick={handleAddMatch}
+                  >
                     <Plus className="w-4 h-4 mr-1" />
                     Add Match
                   </Button>
@@ -246,7 +692,12 @@ export function CalendarView() {
                               Match {index + 1}
                             </Badge>
                             <div className="flex gap-1">
-                              <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-accent/20">
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="h-6 w-6 p-0 hover:bg-accent/20"
+                                onClick={() => handleEditMatch(match)}
+                              >
                                 <Edit3 className="w-3 h-3" />
                               </Button>
                               <Button
@@ -276,7 +727,12 @@ export function CalendarView() {
                   <div className="text-center py-8 text-muted-foreground">
                     <Calendar className="w-12 h-12 mx-auto mb-4 opacity-30" />
                     <p className="font-medium mb-1">No matches on this date</p>
-                    <Button size="sm" variant="outline" className="mt-2 hover:bg-success/20 bg-transparent">
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      className="mt-2 hover:bg-success/20 bg-transparent"
+                      onClick={handleAddMatch}
+                    >
                       <Plus className="w-4 h-4 mr-1" />
                       Add Match
                     </Button>
