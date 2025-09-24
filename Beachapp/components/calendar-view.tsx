@@ -329,26 +329,63 @@ export function CalendarView() {
     const dayMatches = matches[dateKey] || []
     const isMonday = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).getDay() === 1
     const hasMatches = dayMatches.length > 0
+    const isToday = new Date().toDateString() === new Date(currentDate.getFullYear(), currentDate.getMonth(), day).toDateString()
+
+    // Get match count badge color
+    const getMatchBadgeColor = (count: number) => {
+      if (count >= 3) return "bg-gradient-to-br from-red-500 to-pink-500"
+      if (count === 2) return "bg-gradient-to-br from-blue-500 to-cyan-500"
+      return "bg-gradient-to-br from-green-500 to-emerald-500"
+    }
 
     days.push(
       <div
         key={day}
         className={cn(
-          "h-24 p-2 border border-border cursor-pointer transition-all duration-200 relative",
-          isMonday ? "bg-primary/5 border-primary/30 hover:bg-primary/10" : "hover:bg-accent/20",
-          selectedDate === dateKey ? "bg-success/10 border-success ring-2 ring-success/20" : "",
+          "h-24 p-2 border border-border cursor-pointer transition-all duration-200 relative rounded-lg group",
+          isMonday ? "bg-gradient-to-br from-primary/5 to-primary/10 border-primary/30 hover:bg-primary/15" : "hover:bg-accent/20",
+          selectedDate === dateKey ? "bg-gradient-to-br from-success/10 to-success/20 border-success ring-2 ring-success/30 shadow-lg" : "",
+          isToday && "ring-2 ring-primary/50 bg-primary/5"
         )}
         onClick={() => setSelectedDate(selectedDate === dateKey ? null : dateKey)}
       >
         <div className="flex justify-between items-start mb-1">
-          <span className={cn("text-sm font-medium", isMonday ? "text-primary font-semibold" : "text-foreground")}>
+          <span className={cn(
+            "text-sm font-medium transition-colors",
+            isMonday ? "text-primary font-bold" : "text-foreground",
+            isToday && "text-primary font-bold text-lg"
+          )}>
             {day}
           </span>
+          {hasMatches && (
+            <div className={cn(
+              "w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white shadow-lg",
+              getMatchBadgeColor(dayMatches.length)
+            )}>
+              {dayMatches.length}
+            </div>
+          )}
         </div>
         {hasMatches && (
-          <div className="absolute bottom-2 left-2">
-            <div className="w-2 h-2 rounded-full bg-success animate-pulse"></div>
+          <div className="absolute bottom-2 left-2 right-2">
+            <div className="flex gap-1">
+              {dayMatches.slice(0, 3).map((_, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "w-2 h-2 rounded-full",
+                    getMatchBadgeColor(dayMatches.length)
+                  )}
+                />
+              ))}
+              {dayMatches.length > 3 && (
+                <div className="w-2 h-2 rounded-full bg-slate-400" />
+              )}
+            </div>
           </div>
+        )}
+        {isToday && (
+          <div className="absolute top-1 right-1 w-2 h-2 rounded-full bg-primary animate-pulse" />
         )}
       </div>,
     )
@@ -680,44 +717,53 @@ export function CalendarView() {
             <CardContent>
               {selectedDate ? (
                 selectedMatches.length > 0 ? (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {selectedMatches.map((match, index) => (
                       <Card
                         key={match.id}
-                        className="bg-gradient-to-br from-accent/10 to-secondary/20 border border-accent/20"
+                        className="border-0 shadow-md hover:shadow-lg transition-all duration-200 overflow-hidden group rounded-xl bg-gradient-to-br from-slate-50 to-slate-100"
                       >
-                        <CardContent className="p-3">
-                          <div className="flex items-center justify-between mb-2">
-                            <Badge variant="secondary" className="bg-accent/20 text-accent-foreground text-xs">
-                              Match {index + 1}
-                            </Badge>
+                        <div className="h-2 bg-gradient-to-r from-primary to-primary/80" />
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center">
+                                <Trophy className="w-4 h-4 text-white" />
+                              </div>
+                              <Badge className="bg-primary/10 text-primary font-bold px-3 py-1">
+                                Match {index + 1}
+                              </Badge>
+                            </div>
                             <div className="flex gap-1">
                               <Button 
                                 variant="ghost" 
                                 size="sm" 
-                                className="h-6 w-6 p-0 hover:bg-accent/20"
+                                className="h-8 w-8 p-0 hover:bg-primary/20 hover:text-primary rounded-lg transition-colors"
                                 onClick={() => handleEditMatch(match)}
                               >
-                                <Edit3 className="w-3 h-3" />
+                                <Edit3 className="w-4 h-4" />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-6 w-6 p-0 hover:bg-destructive/20 hover:text-destructive"
+                                className="h-8 w-8 p-0 hover:bg-destructive/20 hover:text-destructive rounded-lg transition-colors"
                                 onClick={() => handleDeleteMatch(selectedDate, match.id)}
                               >
-                                <Trash2 className="w-3 h-3" />
+                                <Trash2 className="w-4 h-4" />
                               </Button>
                             </div>
                           </div>
-                          <div className="space-y-1">
-                            <p className="font-medium text-sm flex items-center gap-1">
-                              <Trophy className="w-3 h-3 text-warning" />
-                              <span className="text-success">{getTeamDisplay(match.winningTeam)}</span>
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              {new Date(match.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                            </p>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium text-slate-600">Winners:</span>
+                              <span className="font-bold text-lg text-primary">
+                                🏆 {getTeamDisplay(match.winningTeam)}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-2 text-xs text-slate-500">
+                              <Clock className="w-3 h-3" />
+                              <span>{new Date(match.date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
