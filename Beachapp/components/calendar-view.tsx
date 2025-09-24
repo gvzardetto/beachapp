@@ -114,7 +114,7 @@ export function CalendarView() {
             id: match.id?.toString() || "",
             date: match.date,
             winningTeam,
-            players: {
+      players: {
               teamA: teamA,
               teamB: teamB
             }

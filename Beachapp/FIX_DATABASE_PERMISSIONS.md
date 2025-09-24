@@ -56,3 +56,4 @@ After running the SQL, test the following:
 
 The issue was that Row Level Security (RLS) was enabled on the matches table, but only SELECT and INSERT policies were created. UPDATE and DELETE operations were being blocked by the security policies.
 
+

@@ -92,3 +92,4 @@ Your beach tennis app now supports:
 
 All operations are fully integrated with Supabase and provide real-time feedback! 🎾
 
+
