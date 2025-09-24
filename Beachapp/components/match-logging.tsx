@@ -354,7 +354,7 @@ export function MatchLogging() {
           <h1 className="text-3xl font-bold text-foreground">
             Match Results
           </h1>
-          <p className="text-muted-foreground">Track your tennis victories</p>
+          <p className="text-muted-foreground">Every Point Matters</p>
         </div>
 
         <Card className="border-0 shadow-2xl rounded-3xl bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
@@ -583,9 +583,6 @@ export function MatchLogging() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <div className="text-sm text-muted-foreground mb-2">
-                          <span className="font-medium">Winners:</span>
-                        </div>
                         <div className="text-lg font-bold text-primary">
                           🏆 {getTeamDisplay(match.winningTeam)}
                         </div>

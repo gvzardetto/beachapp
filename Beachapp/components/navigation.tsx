@@ -25,7 +25,7 @@ export function Navigation() {
                   <Trophy className="w-4 h-4 text-white" />
                 </div>
                 <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                  Tennis Mondays
+                  O Beach Venceu
                 </h1>
               </div>
             </div>

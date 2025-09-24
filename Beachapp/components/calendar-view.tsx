@@ -749,8 +749,8 @@ export function CalendarView() {
                                 <Trophy className="w-4 h-4 text-white" />
                               </div>
                               <Badge className="bg-slate-100 text-slate-800 font-bold px-3 py-1 hover:bg-slate-200 transition-colors">
-                                Match {index + 1}
-                              </Badge>
+                              Match {index + 1}
+                            </Badge>
                             </div>
                             <div className="flex gap-1">
                               <Button 
@@ -772,8 +772,7 @@ export function CalendarView() {
                             </div>
                           </div>
                           <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium text-slate-600">Winners:</span>
+                            <div className="flex items-center justify-center">
                               <span className="font-bold text-lg text-primary">
                                 🏆 {getTeamDisplay(match.winningTeam)}
                               </span>

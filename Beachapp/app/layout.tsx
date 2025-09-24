@@ -8,8 +8,8 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Tennis Mondays",
-  description: "Track your Monday doubles tennis matches, rankings, and stats",
+  title: "O Beach Venceu",
+  description: "Every Point Matters - Track your doubles tennis matches and stats",
   generator: "v0.app",
 }
 
