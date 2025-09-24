@@ -249,7 +249,7 @@ export function StatsView() {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid gap-6">
+      <div className="grid gap-6 lg:grid-cols-2">
         <Card className="rounded-3xl shadow-xl border-0 bg-gradient-to-br from-white via-slate-50/80 to-white backdrop-blur-xl">
           <CardContent className="p-6">
             <div className="flex items-center gap-4">
@@ -263,6 +263,39 @@ export function StatsView() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Current Champion Card */}
+        {statsData.playerWins.length > 0 && (
+          <Card className="rounded-3xl shadow-2xl border-0 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 backdrop-blur-xl">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-amber-400 via-yellow-500 to-orange-500 flex items-center justify-center shadow-2xl">
+                  <Trophy className="w-8 h-8 text-white drop-shadow-lg" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-lg font-bold bg-gradient-to-r from-amber-600 via-yellow-600 to-orange-600 bg-clip-text text-transparent">
+                      🏆 Current Champion
+                    </h3>
+                  </div>
+                  <p className="text-base text-slate-700 mb-1">
+                    <span className="font-bold text-lg bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
+                      {statsData.playerWins[0].player}
+                    </span>
+                    <span className="mx-1 text-slate-500 text-sm">leads with</span>
+                    <span className="font-bold text-amber-600">{statsData.playerWins[0].percentage.toFixed(1)}%</span>
+                  </p>
+                  <div className="flex items-center gap-4 text-xs text-slate-600">
+                    <div className="flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></div>
+                      <span className="font-medium">{statsData.playerWins[0].wins} wins</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
