@@ -20,3 +20,4 @@ CREATE POLICY "Allow public delete access on matches" ON matches
 
 -- Test the permissions
 SELECT 'Permissions updated successfully' as status;
+

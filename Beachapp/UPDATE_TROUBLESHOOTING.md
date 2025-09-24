@@ -110,3 +110,4 @@ After fixing the permissions, you should see:
 4. **Check browser console** for debug info
 
 The update functionality should work perfectly after adding the database permissions! 🎾
+

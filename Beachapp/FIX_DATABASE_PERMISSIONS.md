@@ -55,3 +55,4 @@ After running the SQL, test the following:
 4. Check that changes persist in the database
 
 The issue was that Row Level Security (RLS) was enabled on the matches table, but only SELECT and INSERT policies were created. UPDATE and DELETE operations were being blocked by the security policies.
+
