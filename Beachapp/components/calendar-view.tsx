@@ -19,10 +19,10 @@ export function CalendarView() {
   const [teamCombinations, setTeamCombinations] = useState<any>({})
   const [editingMatch, setEditingMatch] = useState<Match | null>(null)
   const [isEditing, setIsEditing] = useState(false)
-  const [selectedTeam, setSelectedTeam] = useState<"A" | "B" | "C" | "D" | "E" | null>(null)
+  const [selectedTeam, setSelectedTeam] = useState<"A" | "B" | "C" | "D" | "E" | "F" | null>(null)
   const [isUpdating, setIsUpdating] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
-  const [newMatchTeam, setNewMatchTeam] = useState<"A" | "B" | "C" | "D" | "E" | null>(null)
+  const [newMatchTeam, setNewMatchTeam] = useState<"A" | "B" | "C" | "D" | "E" | "F" | null>(null)
   const [isSaving, setIsSaving] = useState(false)
 
   // Fetch players first
@@ -54,6 +54,10 @@ export function CalendarView() {
             E: { 
               players: [fetchedPlayers[2], fetchedPlayers[3]], 
               label: `${fetchedPlayers[2].name} + ${fetchedPlayers[3].name}` 
+            },
+            F: { 
+              players: [fetchedPlayers[1], fetchedPlayers[3]], 
+              label: `${fetchedPlayers[1].name} + ${fetchedPlayers[3].name}` 
             }
           }
           setTeamCombinations(combinations)
@@ -89,8 +93,9 @@ export function CalendarView() {
           const teamC = teamCombinations.C.players
           const teamD = teamCombinations.D.players
           const teamE = teamCombinations.E.players
+          const teamF = teamCombinations.F.players
           
-          let winningTeam: "A" | "B" | "C" | "D" | "E" = "A"
+          let winningTeam: "A" | "B" | "C" | "D" | "E" | "F" = "A"
           
           // Check if player1_id and player2_id match any team combination
           if ((match.player1_id === teamA[0].id && match.player2_id === teamA[1].id) ||
@@ -108,6 +113,9 @@ export function CalendarView() {
           } else if ((match.player1_id === teamE[0].id && match.player2_id === teamE[1].id) ||
                      (match.player1_id === teamE[1].id && match.player2_id === teamE[0].id)) {
             winningTeam = "E"
+          } else if ((match.player1_id === teamF[0].id && match.player2_id === teamF[1].id) ||
+                     (match.player1_id === teamF[1].id && match.player2_id === teamF[0].id)) {
+            winningTeam = "F"
           }
           
           const convertedMatch: Match = {
@@ -320,7 +328,7 @@ export function CalendarView() {
 
   // Empty cells for days before the first day of the month
   for (let i = 0; i < firstDay; i++) {
-    days.push(<div key={`empty-${i}`} className="h-28 rounded-xl bg-slate-50/30" />)
+    days.push(<div key={`empty-${i}`} className="h-16 sm:h-28 rounded-lg sm:rounded-xl bg-slate-50/30" />)
   }
 
   // Days of the month
@@ -342,43 +350,43 @@ export function CalendarView() {
       <div
         key={day}
         className={cn(
-          "h-28 p-3 cursor-pointer transition-all duration-300 relative rounded-2xl group shadow-sm hover:shadow-lg",
+          "h-16 sm:h-28 p-1 sm:p-3 cursor-pointer transition-all duration-300 relative rounded-lg sm:rounded-2xl group shadow-sm hover:shadow-lg",
           "bg-gradient-to-br from-white to-slate-50/80 border-0",
           isMonday ? "bg-gradient-to-br from-violet-50 to-purple-50 hover:from-violet-100 hover:to-purple-100 shadow-md" : "hover:from-slate-50 hover:to-slate-100",
-          selectedDate === dateKey ? "bg-gradient-to-br from-emerald-50 to-green-50 ring-2 ring-emerald-400/50 shadow-xl scale-105" : "",
-          isToday && "ring-2 ring-violet-400/60 bg-gradient-to-br from-violet-50/80 to-indigo-50/80 shadow-lg"
+          selectedDate === dateKey ? "bg-gradient-to-br from-emerald-50 to-green-50 ring-1 sm:ring-2 ring-emerald-400/50 shadow-xl scale-105" : "",
+          isToday && "ring-1 sm:ring-2 ring-violet-400/60 bg-gradient-to-br from-violet-50/80 to-indigo-50/80 shadow-lg"
         )}
         onClick={() => setSelectedDate(selectedDate === dateKey ? null : dateKey)}
       >
-        <div className="flex justify-start items-start mb-2">
+        <div className="flex justify-start items-start mb-1 sm:mb-2">
           <span className={cn(
-            "text-base font-semibold transition-all duration-200 px-2 py-1 rounded-lg",
+            "text-xs sm:text-base font-semibold transition-all duration-200 px-1 sm:px-2 py-0.5 sm:py-1 rounded-md sm:rounded-lg",
             isMonday ? "text-violet-700 font-bold bg-violet-100/50" : "text-slate-700",
-            isToday && "text-violet-800 font-bold text-lg bg-violet-200/60 shadow-sm"
+            isToday && "text-violet-800 font-bold text-sm sm:text-lg bg-violet-200/60 shadow-sm"
           )}>
             {day}
           </span>
         </div>
         {hasMatches && (
-          <div className="absolute bottom-3 left-3 right-3">
-            <div className="flex gap-1.5 justify-center">
-              {dayMatches.slice(0, 4).map((_, index) => (
+          <div className="absolute bottom-1 sm:bottom-3 left-1 sm:left-3 right-1 sm:right-3">
+            <div className="flex gap-1 sm:gap-1.5 justify-center">
+              {dayMatches.slice(0, 3).map((_, index) => (
                 <div
                   key={index}
                   className={cn(
-                    "w-2.5 h-2.5 rounded-full shadow-sm transition-all duration-200 group-hover:scale-110",
+                    "w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full shadow-sm transition-all duration-200 group-hover:scale-110",
                     getMatchBadgeColor(dayMatches.length)
                   )}
                 />
               ))}
-              {dayMatches.length > 4 && (
-                <div className="w-2.5 h-2.5 rounded-full bg-gradient-to-br from-slate-400 to-slate-500 shadow-sm" />
+              {dayMatches.length > 3 && (
+                <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full bg-gradient-to-br from-slate-400 to-slate-500 shadow-sm" />
               )}
             </div>
           </div>
         )}
         {isToday && (
-          <div className="absolute top-2 right-2 w-3 h-3 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 animate-pulse shadow-lg" />
+          <div className="absolute top-1 sm:top-2 right-1 sm:right-2 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gradient-to-br from-violet-500 to-purple-500 animate-pulse shadow-lg" />
         )}
       </div>,
     )
@@ -386,13 +394,13 @@ export function CalendarView() {
 
   const selectedMatches = selectedDate ? matches[selectedDate] || [] : []
 
-  const getTeamDisplay = (team: "A" | "B" | "C" | "D" | "E") => {
+  const getTeamDisplay = (team: "A" | "B" | "C" | "D" | "E" | "F") => {
     const combination = teamCombinations[team]
     return combination?.label || `Team ${team}`
   }
 
-  const getTeamIcon = (team: "A" | "B" | "C" | "D" | "E") => {
-    const icons = { A: Trophy, B: Star, C: Zap, D: Users, E: Clock }
+  const getTeamIcon = (team: "A" | "B" | "C" | "D" | "E" | "F") => {
+    const icons = { A: Trophy, B: Star, C: Zap, D: Users, E: Clock, F: Plus }
     return icons[team]
   }
 
@@ -457,8 +465,8 @@ export function CalendarView() {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Select Winning Team</h3>
-                  <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
-                    {(Object.keys(teamCombinations) as Array<"A" | "B" | "C" | "D" | "E">).map((team) => {
+                  <div className="grid gap-2 sm:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+                    {(Object.keys(teamCombinations) as Array<"A" | "B" | "C" | "D" | "E" | "F">).map((team) => {
                       const TeamIcon = getTeamIcon(team)
                       const isSelected = selectedTeam === team
                       return (
@@ -472,15 +480,15 @@ export function CalendarView() {
                           )}
                           onClick={() => setSelectedTeam(team)}
                         >
-                          <CardContent className="p-4">
-                            <div className="flex items-center gap-3">
+                          <CardContent className="p-2 sm:p-4">
+                            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
                               <div className={cn(
-                                "p-2 rounded-lg",
+                                "p-1.5 sm:p-2 rounded-lg",
                                 isSelected ? "bg-primary text-primary-foreground" : "bg-muted"
                               )}>
-                                <TeamIcon className="w-4 h-4" />
+                                <TeamIcon className="w-3 h-3 sm:w-4 sm:h-4" />
                               </div>
-                              <div className="space-y-1">
+                              <div className="space-y-1 text-center sm:text-left">
                                 <Badge
                                   variant={isSelected ? "default" : "secondary"}
                                   className={cn(
@@ -490,7 +498,7 @@ export function CalendarView() {
                                 >
                                   Team {team}
                                 </Badge>
-                                <p className="text-sm font-medium">{teamCombinations[team]?.label || `Team ${team}`}</p>
+                                <p className="text-xs sm:text-sm font-medium leading-tight">{teamCombinations[team]?.label || `Team ${team}`}</p>
                               </div>
                             </div>
                           </CardContent>
@@ -555,8 +563,8 @@ export function CalendarView() {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold mb-3">Select Winning Team</h3>
-                  <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
-                    {(Object.keys(teamCombinations) as Array<"A" | "B" | "C" | "D" | "E">).map((team) => {
+                  <div className="grid gap-2 sm:gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+                    {(Object.keys(teamCombinations) as Array<"A" | "B" | "C" | "D" | "E" | "F">).map((team) => {
                       const TeamIcon = getTeamIcon(team)
                       const isSelected = newMatchTeam === team
                       return (
@@ -575,24 +583,26 @@ export function CalendarView() {
                             "from-blue-500 to-cyan-500": team === "B",
                             "from-yellow-500 to-orange-500": team === "C", 
                             "from-green-500 to-emerald-500": team === "D",
-                            "from-pink-500 to-rose-500": team === "E"
+                            "from-pink-500 to-rose-500": team === "E",
+                            "from-orange-500 to-red-500": team === "F"
                           })} />
-                          <CardContent className="p-6">
-                            <div className="flex items-center justify-center mb-4">
+                          <CardContent className="p-3 sm:p-6">
+                            <div className="flex items-center justify-center mb-2 sm:mb-4">
                               <div
-                                className={cn("w-12 h-12 rounded-xl flex items-center justify-center shadow-sm", {
+                                className={cn("w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center shadow-sm", {
                                   "bg-gradient-to-br from-purple-500 to-pink-500": team === "A",
                                   "bg-gradient-to-br from-blue-500 to-cyan-500": team === "B",
                                   "bg-gradient-to-br from-yellow-500 to-orange-500": team === "C", 
                                   "bg-gradient-to-br from-green-500 to-emerald-500": team === "D",
-                                  "bg-gradient-to-br from-pink-500 to-rose-500": team === "E"
+                                  "bg-gradient-to-br from-pink-500 to-rose-500": team === "E",
+                                  "bg-gradient-to-br from-orange-500 to-red-500": team === "F"
                                 })}
                               >
-                                <TeamIcon className="w-6 h-6 text-white" />
+                                <TeamIcon className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                               </div>
                             </div>
-                            <div className="space-y-2">
-                              <p className="font-semibold text-foreground">{teamCombinations[team]?.label || `Team ${team}`}</p>
+                            <div className="space-y-1 sm:space-y-2">
+                              <p className="text-xs sm:text-sm font-semibold text-foreground text-center leading-tight">{teamCombinations[team]?.label || `Team ${team}`}</p>
                             </div>
                           </CardContent>
                         </Card>
@@ -672,14 +682,14 @@ export function CalendarView() {
               </div>
               <CardDescription className="text-slate-600 text-base">Click on a date to view and edit match details</CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-7 gap-2 p-4 bg-gradient-to-br from-slate-50/50 to-white rounded-2xl shadow-inner">
+            <CardContent className="p-3 sm:p-6">
+              <div className="grid grid-cols-7 gap-1 sm:gap-2 p-2 sm:p-4 bg-gradient-to-br from-slate-50/50 to-white rounded-2xl shadow-inner overflow-x-auto">
                 {/* Day headers */}
                 {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
                   <div
                     key={day}
                     className={cn(
-                      "p-3 text-center text-sm font-bold rounded-xl shadow-sm transition-all duration-200",
+                      "p-1 sm:p-3 text-center text-xs sm:text-sm font-bold rounded-lg sm:rounded-xl shadow-sm transition-all duration-200",
                       index === 1 ? "bg-gradient-to-br from-violet-100 to-purple-100 text-violet-700" : "bg-white/80 text-slate-600"
                     )}
                   >
@@ -734,7 +744,8 @@ export function CalendarView() {
                           "from-blue-500 to-cyan-500": match.winningTeam === "B", 
                           "from-yellow-500 to-orange-500": match.winningTeam === "C",
                           "from-green-500 to-emerald-500": match.winningTeam === "D",
-                          "from-pink-500 to-rose-500": match.winningTeam === "E"
+                          "from-pink-500 to-rose-500": match.winningTeam === "E",
+                          "from-orange-500 to-red-500": match.winningTeam === "F"
                         })} />
                         <CardContent className="p-4">
                           <div className="flex items-center justify-between mb-3">
@@ -744,7 +755,8 @@ export function CalendarView() {
                                 "bg-gradient-to-br from-blue-500 to-cyan-500": match.winningTeam === "B", 
                                 "bg-gradient-to-br from-yellow-500 to-orange-500": match.winningTeam === "C",
                                 "bg-gradient-to-br from-green-500 to-emerald-500": match.winningTeam === "D",
-                                "bg-gradient-to-br from-pink-500 to-rose-500": match.winningTeam === "E"
+                                "bg-gradient-to-br from-pink-500 to-rose-500": match.winningTeam === "E",
+                                "bg-gradient-to-br from-orange-500 to-red-500": match.winningTeam === "F"
                               })}>
                                 <Trophy className="w-4 h-4 text-white" />
                               </div>

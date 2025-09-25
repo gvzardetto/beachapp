@@ -17,7 +17,7 @@ import { logMatch, getPlayerRankings, getUpcomingMatches, getMatchesByDate, upda
 const mockTodayMatches: Match[] = []
 
 export function MatchLogging() {
-  const [selectedTeam, setSelectedTeam] = useState<"A" | "B" | "C" | "D" | "E" | null>(null)
+  const [selectedTeam, setSelectedTeam] = useState<"A" | "B" | "C" | "D" | "E" | "F" | null>(null)
   const [todayMatches, setTodayMatches] = useState<Match[]>([])
   const [matchDate, setMatchDate] = useState<string>(new Date().toISOString().split("T")[0])
   const [players, setPlayers] = useState<Player[]>([])
@@ -46,7 +46,7 @@ export function MatchLogging() {
       setIsLoading(true)
       
       // Check if team combinations are loaded
-      if (!teamCombinations.A || !teamCombinations.B || !teamCombinations.C || !teamCombinations.D || !teamCombinations.E) {
+      if (!teamCombinations.A || !teamCombinations.B || !teamCombinations.C || !teamCombinations.D || !teamCombinations.E || !teamCombinations.F) {
         console.log("Team combinations not loaded yet, skipping match fetch")
         setTodayMatches([])
         return
@@ -62,8 +62,9 @@ export function MatchLogging() {
         const teamC = teamCombinations.C.players
         const teamD = teamCombinations.D.players
         const teamE = teamCombinations.E.players
+        const teamF = teamCombinations.F.players
         
-        let winningTeam: "A" | "B" | "C" | "D" | "E" = "A"
+        let winningTeam: "A" | "B" | "C" | "D" | "E" | "F" = "A"
         
         // Check if player1_id and player2_id match any team combination
         if ((match.player1_id === teamA[0].id && match.player2_id === teamA[1].id) ||
@@ -81,6 +82,9 @@ export function MatchLogging() {
         } else if ((match.player1_id === teamE[0].id && match.player2_id === teamE[1].id) ||
                    (match.player1_id === teamE[1].id && match.player2_id === teamE[0].id)) {
           winningTeam = "E"
+        } else if ((match.player1_id === teamF[0].id && match.player2_id === teamF[1].id) ||
+                   (match.player1_id === teamF[1].id && match.player2_id === teamF[0].id)) {
+          winningTeam = "F"
         }
         
         return {
@@ -132,6 +136,10 @@ export function MatchLogging() {
             E: { 
               players: [fetchedPlayers[2], fetchedPlayers[3]], 
               label: `${fetchedPlayers[2].name} + ${fetchedPlayers[3].name}` 
+            },
+            F: { 
+              players: [fetchedPlayers[1], fetchedPlayers[3]], 
+              label: `${fetchedPlayers[1].name} + ${fetchedPlayers[3].name}` 
             }
           }
           setTeamCombinations(combinations)
@@ -325,23 +333,24 @@ export function MatchLogging() {
     setSelectedTeam(null)
   }
 
-  const getTeamDisplay = (team: "A" | "B" | "C" | "D" | "E") => {
+  const getTeamDisplay = (team: "A" | "B" | "C" | "D" | "E" | "F") => {
     const combination = teamCombinations[team]
     return combination?.label || `Team ${team}`
   }
 
-  const getTeamIcon = (team: "A" | "B" | "C" | "D" | "E") => {
-    const icons = { A: Trophy, B: Star, C: Zap, D: Users, E: Clock }
+  const getTeamIcon = (team: "A" | "B" | "C" | "D" | "E" | "F") => {
+    const icons = { A: Trophy, B: Star, C: Zap, D: Users, E: Clock, F: CheckCircle }
     return icons[team]
   }
 
-  const getTeamGradient = (team: "A" | "B" | "C" | "D" | "E") => {
+  const getTeamGradient = (team: "A" | "B" | "C" | "D" | "E" | "F") => {
     const gradients = {
       A: "gradient-purple",
       B: "gradient-pink",
       C: "gradient-yellow",
       D: "gradient-blue",
       E: "gradient-green",
+      F: "gradient-orange",
     }
     return gradients[team]
   }
@@ -389,8 +398,8 @@ export function MatchLogging() {
             </div>
 
 
-            <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-5">
-              {(Object.keys(teamCombinations) as Array<"A" | "B" | "C" | "D" | "E">).map((team) => {
+            <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
+              {(Object.keys(teamCombinations) as Array<"A" | "B" | "C" | "D" | "E" | "F">).map((team) => {
                 const TeamIcon = getTeamIcon(team)
                 const isSelected = selectedTeam === team
                 return (
@@ -409,7 +418,8 @@ export function MatchLogging() {
                       "from-blue-400 via-cyan-400 to-teal-400": team === "B", 
                       "from-amber-400 via-orange-400 to-red-400": team === "C",
                       "from-emerald-400 via-green-400 to-teal-400": team === "D",
-                      "from-pink-400 via-rose-400 to-red-400": team === "E"
+                      "from-pink-400 via-rose-400 to-red-400": team === "E",
+                      "from-orange-400 via-red-400 to-pink-400": team === "F"
                     })} />
                     <CardContent className="p-6">
                       <div className="flex items-center justify-center mb-5">
@@ -419,7 +429,8 @@ export function MatchLogging() {
                             "bg-gradient-to-br from-blue-500 via-cyan-500 to-teal-500": team === "B",
                             "bg-gradient-to-br from-amber-500 via-orange-500 to-red-500": team === "C", 
                             "bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500": team === "D",
-                            "bg-gradient-to-br from-pink-500 via-rose-500 to-red-500": team === "E"
+                            "bg-gradient-to-br from-pink-500 via-rose-500 to-red-500": team === "E",
+                            "bg-gradient-to-br from-orange-500 via-red-500 to-pink-500": team === "F"
                           })}
                         >
                           <TeamIcon className="w-8 h-8 text-white drop-shadow-sm" />
@@ -552,7 +563,8 @@ export function MatchLogging() {
                       "from-blue-500 to-cyan-500": match.winningTeam === "B", 
                       "from-yellow-500 to-orange-500": match.winningTeam === "C",
                       "from-green-500 to-emerald-500": match.winningTeam === "D",
-                      "from-pink-500 to-rose-500": match.winningTeam === "E"
+                      "from-pink-500 to-rose-500": match.winningTeam === "E",
+                      "from-orange-500 to-red-500": match.winningTeam === "F"
                     })} />
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between mb-4">
